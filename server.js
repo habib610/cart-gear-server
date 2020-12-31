@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './router/userRouter.js';
 import productRouter from './router/productRouter.js';
+import orderRouter from './router/orderRouter.js';
 
 dotenv.config();
 
@@ -23,12 +24,13 @@ const port = process.env.PORT || 4000;
 
 
 app.use('/api/products', productRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/users', userRouter);
 
 app.get('/', (req, res) => {
     res.send('Server is Running')
 })
 
-app.use('/api/users', userRouter);
 
 app.use((err, req, res, next)=> {
     res.status(500).send({message: err.message})
