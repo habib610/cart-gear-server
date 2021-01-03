@@ -1,25 +1,34 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import userRouter from './router/userRouter.js';
 import productRouter from './router/productRouter.js';
 import orderRouter from './router/orderRouter.js';
+import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config()
+
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-mongoose.connect( process.env.MONGODB_URL || 'mongodb://localhost/cartgear', {
+mongoose.connect( process.env.MONGODB_URL , {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
 })
 
-const port = process.env.PORT || 4000;
 
+const connection = mongoose.connection;
+connection.once("open", ()=> {
+  // we're connected!
+  console.log("Database Connected Successfully");
+});
+
+
+
+const port = process.env.PORT || 4000;
 
 
 
@@ -27,7 +36,7 @@ app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/users', userRouter);
 app.get('/api/config/paypal', (req, res)=> {
-    res.send(process.env.PAYPAL_CLIENT_ID || 'sb')
+    res.send(process.env.PAYPAL_CLIENT_ID )
 })
 
 app.get('/', (req, res) => {
@@ -40,5 +49,5 @@ app.use((err, req, res, next)=> {
 })
 
 app.listen(port, ()=> {
-    console.log("listening port 4000")
+    console.log("listening port", port)
 })
